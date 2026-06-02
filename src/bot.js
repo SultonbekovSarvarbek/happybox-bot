@@ -84,6 +84,16 @@ bot.callbackQuery(/^gender:(MALE|FEMALE)$/, async (ctx) => {
     return;
   }
 
+  // Grab the largest size of the user's current Telegram profile photo, if any.
+  let photoFileId
+  try {
+    const photos = await ctx.api.getUserProfilePhotos(ctx.from.id, { limit: 1 })
+    const sizes = photos.photos?.[0]
+    if (sizes?.length) photoFileId = sizes[sizes.length - 1].file_id
+  } catch {
+    // user has no photo or it's hidden by privacy settings — ignore
+  }
+
   try {
     const result = await registerUser({
       telegramId: String(ctx.from.id),
@@ -92,6 +102,7 @@ bot.callbackQuery(/^gender:(MALE|FEMALE)$/, async (ctx) => {
       lastName: ctx.from.last_name ?? undefined,
       gender,
       telegramUsername: ctx.from.username ?? undefined,
+      photoFileId,
     });
 
     ctx.session.phone = null;
