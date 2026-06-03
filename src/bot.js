@@ -26,10 +26,11 @@ const genderKeyboard = new InlineKeyboard()
 
 // id-form of the App Store link (no Cyrillic in the URL — safer for Telegram).
 const APP_STORE_URL = 'https://apps.apple.com/uz/app/id6758584836'
-const appStoreKeyboard = new InlineKeyboard().url(
-  '📲 Скачать приложение HappyBox',
-  APP_STORE_URL,
-);
+const INSTAGRAM_URL = 'https://www.instagram.com/happybox.sovga/'
+const appStoreKeyboard = new InlineKeyboard()
+  .url('📲 Скачать приложение HappyBox', APP_STORE_URL)
+  .row()
+  .url('📷 Мы в Instagram', INSTAGRAM_URL);
 
 bot.command('start', async (ctx) => {
   ctx.session.phone = null;
