@@ -22,7 +22,14 @@ const contactKeyboard = new Keyboard()
 
 const genderKeyboard = new InlineKeyboard()
   .text('👨 Мужской', 'gender:MALE')
-  .text('👩 Женский', 'gender:FEMALE');
+  .text('👩 Женский', 'gender:FEMALE')
+
+// id-form of the App Store link (no Cyrillic in the URL — safer for Telegram).
+const APP_STORE_URL = 'https://apps.apple.com/uz/app/id6758584836'
+const appStoreKeyboard = new InlineKeyboard().url(
+  '📲 Скачать приложение HappyBox',
+  APP_STORE_URL,
+);
 
 bot.command('start', async (ctx) => {
   ctx.session.phone = null;
@@ -42,11 +49,19 @@ bot.command('link', async (ctx) => {
       await ctx.reply('Ты ещё не зарегистрирован. Нажми /start, чтобы создать ссылку.');
       return;
     }
-    await ctx.reply(`Твоя ссылка:\n${user.link}\n\nВставь её в Telegram-био.`);
+    await ctx.reply(`Твоя ссылка:\n${user.link}\n\nВставь её в Telegram-био.`, {
+      reply_markup: appStoreKeyboard,
+    });
   } catch (err) {
     await ctx.reply('Не получилось получить ссылку. Попробуй позже.');
     console.error('link error:', err.message);
   }
+});
+
+bot.command('app', async (ctx) => {
+  await ctx.reply('Приложение HappyBox — все твои сертификаты в одном месте 👇', {
+    reply_markup: appStoreKeyboard,
+  });
 });
 
 bot.on('message:contact', async (ctx) => {
@@ -111,7 +126,9 @@ bot.callbackQuery(/^gender:(MALE|FEMALE)$/, async (ctx) => {
       `Твоя персональная ссылка готова 👇\n\n` +
         `${result.link}\n\n` +
         `Вставь её в Telegram-био. Любой, кто откроет ссылку, сможет подарить тебе ` +
-        `сертификат — и он появится здесь, в боте.`,
+        `сертификат — и он появится здесь, в боте.\n\n` +
+        `Скачай приложение HappyBox, чтобы видеть свои сертификаты 👇`,
+      { reply_markup: appStoreKeyboard },
     );
   } catch (err) {
     console.error('register error:', err.message);
