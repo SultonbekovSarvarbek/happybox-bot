@@ -123,11 +123,17 @@ bot.callbackQuery(/^gender:(MALE|FEMALE)$/, async (ctx) => {
 
     ctx.session.phone = null;
     await ctx.editMessageText('Готово! 🎉');
+    // The backend already sent a login code to this chat as a separate message,
+    // so point the user to it instead of making them go back and request it.
+    const codeNote = result.codeSent
+      ? `\n\n📲 Код для входа в приложение я отправил тебе отдельным сообщением — ` +
+        `просто введи его в приложении, чтобы войти.`
+      : '';
     await ctx.reply(
       `Твоя персональная ссылка готова 👇\n\n` +
         `${result.link}\n\n` +
         `Вставь её в Telegram-био. Любой, кто откроет ссылку, сможет подарить тебе ` +
-        `сертификат — и он появится здесь, в боте.\n\n` +
+        `сертификат — и он появится здесь, в боте.${codeNote}\n\n` +
         `Скачай приложение HappyBox, чтобы видеть свои сертификаты 👇`,
       { reply_markup: appStoreKeyboard },
     );
